@@ -15,6 +15,11 @@ connection.connect((err) => {
     start()
 })
 
+departments = [] //feel like I need these but haven't used them
+employees = []
+roles = []
+
+
 const start = () => {
     inquirer.prompt(
         {
@@ -99,7 +104,7 @@ const remove = (departmentDeleted) => {
     console.log('Deleting department')
     connection.query('DELETE FROM department WHERE ?',
         {
-            name: departmentDeleted
+            name: departmentDeleted //department not deleting, maybe need to use array method? filter?
         }, (err) => {
             if (err) throw err;
             // console.log(departmentAdded)
@@ -108,24 +113,6 @@ const remove = (departmentDeleted) => {
         }
     )
 }
-
-
-// const updateDepartment = () => {
-//     console.log('Updating department. . .')
-//     const query = connection.query('UPDATE department SET ?',
-//         [
-//             {
-//                 name: 'stocking'
-//             }
-//         ],
-//         (err, res) => {
-//             if (err) throw err
-//             console.log(`${res.affectedRows} department updated!\n`)
-//             deleteDepartment()
-//         }
-//     )
-//     console.log(query.sql)
-// }
 
 const addDepartment = (req) => {
     inquirer.prompt([
@@ -155,6 +142,19 @@ const add = (departmentAdded) => {
 }
 
 
-// const viewDepartments = () => {
-//     inquirer.prompt
+// const updateDepartment = () => {
+//     console.log('Updating department. . .')
+//     const query = connection.query('UPDATE department SET ?',
+//         [
+//             {
+//                 name: 'stocking'
+//             }
+//         ],
+//         (err, res) => {
+//             if (err) throw err
+//             console.log(`${res.affectedRows} department updated!\n`)
+//             deleteDepartment()
+//         }
+//     )
+//     console.log(query.sql)
 // }
