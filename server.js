@@ -9,35 +9,32 @@ const connection = mysql.createConnection({
     database: 'employees_DB'
 })
 
-//rename this file server.js
-//keep connection function on this file
-//create constructor function for adding employees, roles, and departments -- use team profile generator for reference
-// -- name above functions employee.js, roles.js, etc.
-//create index.js and move start() to that file -- this file will run all functionality
+connection.connect((err) => {
+    if (err) throw err;
+    console.log(`Connected as id ${connection.threadId}`)
+    start()
+})
 
 const start = () => {
     inquirer.prompt(
         {
             type: 'list',
-            message: 'What would you like to do?',
-            choices: ['View All Employees', 'View All Employees by Department', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Quit'],
+            message: 'What would you like to view?',
+            choices: ['Department', 'Employee', 'Role', 'Exit'],
             name: 'start'
         }).then(choice => {
             switch (choice.start) {
-                case 'View All Employees':
-                    allEmployees()
+                case 'Department':
+                    viewDepartments()
                     break;
-                case 'View All Employees by Department':
-                    employeesByDepartment()
+                case 'Employee':
+                    viewEmployees()
                     break;
-                case 'View All Employees by Manager':
-                    employeesByManager()
+                case 'Role':
+                    viewRoles()
                     break;
-                case 'Add Employee':
-                    addEmployee()
-                    break;
-                case 'Remove Employee':
-                    removeEmployee()
+                case 'Exit':
+                    connection.end()
                     break;
                 default:
                     start()
@@ -45,8 +42,119 @@ const start = () => {
         })
 }
 
-connection.connect((err) => {
-    if (err) throw err;
-    console.log(`Connected as id ${connection.threadId}`)
-    start()
-})
+const viewDepartments = () => {
+    inquirer.prompt(
+        {
+            type: 'list',
+            message: 'What would you like to do??',
+            choices: ['View All Departments', 'Add Department', 'Remove Department', 'Exit', 'Go Back'],
+            name: 'departmentChoices'
+        }).then(choice => {
+            switch (choice.departmentChoices) {
+                case 'View All Departments':
+                    readDepartments()
+                    break;
+                case 'Add Department':
+                    addDepartment()
+                    break;
+                case 'Remove Department':
+                    deleteDepartment()
+                    break;
+                case 'Exit':
+                    connection.end()
+                    break;
+                default:
+                    start()
+            }
+        })
+}
+
+const readDepartments = () => {
+    console.log('Viewing all departments. . .')
+    const query = connection.query('SELECT * FROM department',
+        (err, data) => {
+            if (err) throw err
+            console.log(data)
+            start()
+
+        }
+    )
+    console.log(query.sql)
+}
+
+const deleteDepartment = () => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'What is the name of the department you want to delete?',
+            name: 'departmentDeleted'
+        }
+    ]).then((answer) => {
+        // console.log(answer.departmentAdded)
+        remove(answer.departmentAdded) //do I need two arguments?
+    })
+}
+
+const remove = (departmentDeleted) => {
+    console.log('Deleting department')
+    connection.query('DELETE FROM department WHERE ?',
+        {
+            name: departmentDeleted
+        }, (err) => {
+            if (err) throw err;
+            // console.log(departmentAdded)
+            // console.log(data)
+            start()
+        }
+    )
+}
+
+
+// const updateDepartment = () => {
+//     console.log('Updating department. . .')
+//     const query = connection.query('UPDATE department SET ?',
+//         [
+//             {
+//                 name: 'stocking'
+//             }
+//         ],
+//         (err, res) => {
+//             if (err) throw err
+//             console.log(`${res.affectedRows} department updated!\n`)
+//             deleteDepartment()
+//         }
+//     )
+//     console.log(query.sql)
+// }
+
+const addDepartment = (req) => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'What is the name of the department you want to add?',
+            name: 'departmentAdded'
+        }
+    ]).then((answer) => {
+        // console.log(answer.departmentAdded)
+        add(answer.departmentAdded) //do I need two arguments?
+    })
+}
+
+const add = (departmentAdded) => {
+    console.log('Adding department')
+    connection.query('INSERT INTO department SET ?',
+        {
+            name: departmentAdded
+        }, (err) => {
+            if (err) throw err;
+            // console.log(departmentAdded)
+            // console.log(data)
+            start()
+        }
+    )
+}
+
+
+// const viewDepartments = () => {
+//     inquirer.prompt
+// }
