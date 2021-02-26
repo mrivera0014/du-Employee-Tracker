@@ -15,20 +15,15 @@ connection.connect((err) => {
     start()
 })
 
-departments = [] //feel like I need these but haven't used them
-employees = []
-roles = []
-
-
 const start = () => {
     inquirer.prompt(
         {
             type: 'list',
             message: 'What would you like to view?',
             choices: ['Department', 'Employee', 'Role', 'Exit'],
-            name: 'start'
+            name: 'startOptions'
         }).then(choice => {
-            switch (choice.start) {
+            switch (choice.startOptions) {
                 case 'Department':
                     viewDepartments()
                     break;
@@ -81,13 +76,13 @@ const readDepartments = () => {
             if (err) throw err
             console.log(data)
             start()
-
         }
     )
     console.log(query.sql)
 }
 
 const deleteDepartment = () => {
+
     inquirer.prompt([
         {
             type: 'input',
@@ -96,25 +91,11 @@ const deleteDepartment = () => {
         }
     ]).then((answer) => {
         // console.log(answer.departmentAdded)
-        remove(answer.departmentAdded) //do I need two arguments?
+        remove(answer.departmentDeleted) //do I need two arguments?
     })
 }
 
-const remove = (departmentDeleted) => {
-    console.log('Deleting department')
-    connection.query('DELETE FROM department WHERE ?',
-        {
-            name: departmentDeleted //department not deleting, maybe need to use array method? filter?
-        }, (err) => {
-            if (err) throw err;
-            // console.log(departmentAdded)
-            // console.log(data)
-            start()
-        }
-    )
-}
-
-const addDepartment = (req) => {
+const addDepartment = () => {
     inquirer.prompt([
         {
             type: 'input',
@@ -123,38 +104,157 @@ const addDepartment = (req) => {
         }
     ]).then((answer) => {
         // console.log(answer.departmentAdded)
-        add(answer.departmentAdded) //do I need two arguments?
+        console.log('Adding department')
+        connection.query('INSERT INTO department SET ?',
+            {
+                name: answer.departmentAdded
+            }, (err) => {
+                if (err) throw err;
+                // console.log(departmentAdded)
+                // console.log(data)
+                start()
+            }
+        )
     })
 }
 
-const add = (departmentAdded) => {
-    console.log('Adding department')
-    connection.query('INSERT INTO department SET ?',
+const viewEmployees = () => {
+    inquirer.prompt(
         {
-            name: departmentAdded
-        }, (err) => {
-            if (err) throw err;
-            // console.log(departmentAdded)
-            // console.log(data)
+            type: 'list',
+            message: 'What would you like to do??',
+            choices: ['View All Employees', 'Add Employee', 'Remove Employee', 'Exit', 'Go Back'],
+            name: 'employeeChoices'
+        }).then(choice => {
+            switch (choice.employeeChoices) {
+                case 'View All Employees':
+                    readEmployees()
+                    break;
+                case 'Add Employee':
+                    addEmployee()
+                    break;
+                case 'Remove Employee':
+                    deleteEmployee()
+                    break;
+                case 'Exit':
+                    connection.end()
+                    break;
+                default:
+                    start()
+            }
+        })
+}
+
+const readEmployees = () => {
+    console.log('Viewing all employees. . .')
+    const query = connection.query('SELECT * FROM employee',
+        (err, data) => {
+            if (err) throw err
+            console.log(data)
             start()
         }
     )
+    console.log(query.sql)
 }
 
+const addEmployee = () => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'What is the first name of the employee you want to add?',
+            name: 'employeeAddedFirst'
+        },
+        {
+            type: 'input',
+            message: 'What is the last name of the employee you want to add?',
+            name: 'employeeAddedLast'
+        }
+    ]).then((answer) => {
+        console.log(answer.employeeAdded)
+        console.log('Adding employee')
+        connection.query('INSERT INTO employee SET ?', [
+            {
+                first_name: answer.employeeAddedFirst,
+            },
+            {
+                last_name: answer.employeeAddedLast,
+            },
+        ]
+            , (err) => {
+                if (err) throw err;
+                start()
+            }
+        )
+    })
+}
 
-// const updateDepartment = () => {
-//     console.log('Updating department. . .')
-//     const query = connection.query('UPDATE department SET ?',
-//         [
-//             {
-//                 name: 'stocking'
-//             }
-//         ],
-//         (err, res) => {
-//             if (err) throw err
-//             console.log(`${res.affectedRows} department updated!\n`)
-//             deleteDepartment()
-//         }
-//     )
-//     console.log(query.sql)
-// }
+const viewRoles = () => {
+    inquirer.prompt(
+        {
+            type: 'list',
+            message: 'What would you like to do??',
+            choices: ['View All Roles', 'Add Role', 'Remove Role', 'Exit', 'Go Back'],
+            name: 'roleChoices'
+        }).then(choice => {
+            switch (choice.roleChoices) {
+                case 'View All Roles':
+                    readRoles()
+                    break;
+                case 'Add Role':
+                    addRole()
+                    break;
+                case 'Remove Role':
+                    deleteRole()
+                    break;
+                case 'Exit':
+                    connection.end()
+                    break;
+                default:
+                    start()
+            }
+        })
+}
+
+const readRoles = () => {
+    console.log('Viewing all roles. . .')
+    const query = connection.query('SELECT * FROM role',
+        (err, data) => {
+            if (err) throw err
+            console.log(data)
+            start()
+        }
+    )
+    console.log(query.sql)
+}
+
+const addRole = () => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'What is the title of the role you want to add?',
+            name: 'roleTitle'
+        },
+        {
+            type: 'input',
+            message: 'What is the salary of the title you added?',
+            name: 'roleSalary'
+        }
+    ]).then((answer) => {
+        console.log(answer.roleTitle)
+        console.log(answer.roleSalary)
+        console.log('Adding role')
+        connection.query('INSERT INTO role SET ?', [
+            {
+                title: answer.roleTitle,
+            },
+            {
+                salary: answer.roleSalary,
+            },
+        ]
+            , (err) => {
+                if (err) throw err;
+                start()
+            }
+        )
+    })
+}
