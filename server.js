@@ -190,39 +190,6 @@ const addEmployee = () => {
     })
 }
 
-const updateEmployeeRole = () => {
-    connection.query('SELECT * FROM employee', (err, data) => {
-        if (err) throw err
-        let employee = data.map(({ first_name }) => ({ name: first_name }))
-        console.log(employee)
-    })
-    inquirer.prompt(
-        {
-            type: 'list',
-            message: 'Which employee role would you like to update?',
-            choices: employee.map(data => { return data.first_name + data.last_name; }),
-            name: employeeChosen
-        },
-        {
-            type: 'input',
-            message: 'What do you want to change the employee role to?',
-            choices: employee,
-            name: updateRole
-        },
-    ).then((answer) => {
-        console.log('Updating employee role. . .')
-        connection.query('UPDATE employee SET ? where ?',
-            [
-                {
-                    role_id: answer.employeeRole,
-                },
-                // {
-                //     employee.employeeChosen
-                // },
-            ])
-    })
-}
-
 const viewRoles = () => {
     inquirer.prompt(
         {
@@ -296,3 +263,4 @@ const addRole = () => {
         )
     })
 }
+
