@@ -90,8 +90,7 @@ const deleteDepartment = () => {
             name: 'departmentDeleted'
         }
     ]).then((answer) => {
-        // console.log(answer.departmentAdded)
-        remove(answer.departmentDeleted) //do I need two arguments?
+        remove(answer.departmentDeleted)
     })
 }
 
@@ -123,7 +122,7 @@ const viewEmployees = () => {
         {
             type: 'list',
             message: 'What would you like to do??',
-            choices: ['View All Employees', 'Add Employee', 'Remove Employee', 'Exit', 'Go Back'],
+            choices: ['View All Employees', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Exit', 'Go Back'],
             name: 'employeeChoices'
         }).then(choice => {
             switch (choice.employeeChoices) {
@@ -135,6 +134,9 @@ const viewEmployees = () => {
                     break;
                 case 'Remove Employee':
                     deleteEmployee()
+                    break;
+                case 'Update Employee Role':
+                    updateEmployeeRole()
                     break;
                 case 'Exit':
                     connection.end()
@@ -169,7 +171,7 @@ const addEmployee = () => {
             message: 'What is the last name of the employee you want to add?',
             name: 'employeeAddedLast'
         }
-    ]).then((answer) => {
+    ]).then(answer => {
         console.log(answer.employeeAdded)
         console.log('Adding employee')
         connection.query('INSERT INTO employee SET ?', [
@@ -188,12 +190,45 @@ const addEmployee = () => {
     })
 }
 
+const updateEmployeeRole = () => {
+    connection.query('SELECT * FROM employee', (err, data) => {
+        if (err) throw err
+        let employee = data.map(({ first_name }) => ({ name: first_name }))
+        console.log(employee)
+    })
+    inquirer.prompt(
+        {
+            type: 'list',
+            message: 'Which employee role would you like to update?',
+            choices: employee.map(data => { return data.first_name + data.last_name; }),
+            name: employeeChosen
+        },
+        {
+            type: 'input',
+            message: 'What do you want to change the employee role to?',
+            choices: employee,
+            name: updateRole
+        },
+    ).then((answer) => {
+        console.log('Updating employee role. . .')
+        connection.query('UPDATE employee SET ? where ?',
+            [
+                {
+                    role_id: answer.employeeRole,
+                },
+                // {
+                //     employee.employeeChosen
+                // },
+            ])
+    })
+}
+
 const viewRoles = () => {
     inquirer.prompt(
         {
             type: 'list',
             message: 'What would you like to do??',
-            choices: ['View All Roles', 'Add Role', 'Remove Role', 'Exit', 'Go Back'],
+            choices: ['View All Roles', 'Add Role', 'Remove Role', 'Remove Employee', 'Update Employee Role', 'Exit', 'Go Back'],
             name: 'roleChoices'
         }).then(choice => {
             switch (choice.roleChoices) {
@@ -205,6 +240,9 @@ const viewRoles = () => {
                     break;
                 case 'Remove Role':
                     deleteRole()
+                    break;
+                case 'Update Employee Role':
+                    updateEmployeeRole()
                     break;
                 case 'Exit':
                     connection.end()
