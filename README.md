@@ -2,30 +2,39 @@
 
 
 ## Description
-This is a CMS project where the viewer will be able to interact with info stored in a database.
+
+In this CMS project I created an interface that will allow the user to manage their companies employees.
 
 ## Table of Contents
 [Title](##Title)
+</b>
+
 [Description](##Description)
+</b>
+
 [Installations](##Installations)
-[Usage](##Usage)
-[License](##License)
-[Contributing](##Contributing)
+</b>
+
 [Questions](##Questions)
+</b>
+
+[Demonstration](##Demonstration)
+</b>
 
 
 
 
 ## Installations
+
 Run npm i
 
-For this project inquirer and mysql were used.
+For this project console.table, inquirer, and mysql were installed.
 
 
 ## Questions
+
 If you have any questions contact me at mrivera0014@gmail.com.
-Find more of my work at (https://github.com/mrivera0014/)
 
 ## Demonstration
 
-[https://drive.google.com/file/d/1Jj1qQKA2wtOFMCgCc7zZCHNwqO24mBc1/view](https://drive.google.com/file/d/1Jj1qQKA2wtOFMCgCc7zZCHNwqO24mBc1/view)
+[Click here for a video walk through](https://drive.google.com/file/d/1Jj1qQKA2wtOFMCgCc7zZCHNwqO24mBc1/view)
